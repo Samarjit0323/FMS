@@ -1,0 +1,122 @@
+body {
+	background-image: url('./assets/bg.jpeg');
+	background-color: #f0f0f0; /* Fallback color */
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+	margin: 0;
+	padding: 0;
+	font-family: Arial, sans-serif;
+	min-height: 100vh;
+	width: 100%;
+	overflow-x: hidden;
+}
+.main-content {
+	width: 100%;
+	min-height: 100vh;
+	border-radius: 20px;
+	box-shadow: 0 5px 5px rgba(0,0,0,.4);
+	margin: 0;
+	display: flex;
+	position: relative;
+}
+.company__info {
+	background-color: #0e497a;
+	border-top-left-radius: 20px;
+	border-bottom-left-radius: 20px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	color: #8b3535;
+	padding: 2em;
+}
+
+.company__logo {
+	display: block;
+	margin-bottom: 1.5em;
+	text-align: center;
+}
+
+.company__logo img {
+	width: 50px;
+	height: auto;
+	max-width: 50%;
+	border-radius: 2px;
+	box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+	margin: 0 auto;
+}
+
+.company_title {
+	margin-top: 0.5em;
+	font-size: 1.8rem;
+	font-weight: 600;
+	color: white;
+	text-align: center;
+    align-content: center ;
+	margin-left: auto;
+	margin-right: auto;
+}
+@media screen and (max-width: 640px) {
+	.main-content {width: 90%;}
+	.company__info {display: none;}
+	.login_form {
+		border-top-left-radius: 20px;
+		border-bottom-left-radius: 20px;
+	}
+}
+
+@media screen and (min-width: 642px) and (max-width:800px) {
+	.main-content {width: 70%;}
+	.company__logo img {
+		width: 45px;
+	}
+}
+
+@media screen and (min-width: 801px) {
+	.company__logo img {
+		width: 15px;
+	}
+}
+.row > h2 {
+	color:#008080;
+}
+.login_form {
+	background-color: #fff;
+	border-top-right-radius: 20px;
+	border-bottom-right-radius: 20px;
+	border-top: 1px solid #ccc;
+	border-right: 1px solid #ccc;
+	padding: 2em;
+}
+form {padding: 0 2em;}
+.form__input {
+	width: 100%;
+	border: none;
+	border-bottom: 1px solid #aaa;
+	padding: 1em .5em .5em;
+	padding-left: 2em;
+	outline: none;
+	margin: 1.5em auto;
+	transition: all .5s ease;
+}
+.form__input:focus {
+	border-bottom-color: #008080;
+	box-shadow: 0 0 5px rgba(0,80,80,.4); 
+	border-radius: 4px;
+}
+.btn {
+	transition: all .5s ease;
+	width: 70%;
+	border-radius: 30px;
+	color:#008080;
+	font-weight: 600;
+	background-color: #fff;
+	border: 1px solid #008080;
+	margin-top: 1.5em;
+	margin-bottom: 1em;
+}
+.btn:hover, .btn:focus {
+	background-color: #008080;
+	color: #0a4e72;
+}
