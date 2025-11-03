@@ -1,0 +1,70 @@
+html, body {
+	height: 100%;
+	margin: 0;
+	padding: 0px; 
+	}
+  
+body {
+	font-family: 'Poppins', sans-serif !important;
+	background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('../assets/web_bg.jpg');
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+	margin: 0;
+	padding: 0;
+	display: flex;
+  justify-content: center;  /* centers horizontally */
+  align-items: center; 
+	min-height: 100dvh;
+	box-sizing: border-box;
+	overflow-x: hidden;
+  }
+  
+.container {
+	backdrop-filter: blur(9px) saturate(110%);
+	-webkit-backdrop-filter: blur(9px) saturate(110%);
+	background-color: rgba(2, 11, 43, 0.77);
+	border-radius: 12px;
+	border: 1px solid rgba(255, 255, 255, 0.658);
+	display: flex !important;
+	flex-direction: column;
+	align-items: center !important;
+	max-width: 800px;
+	width: 90%;
+	padding: 20px;
+	min-height: 40vh;
+	gap: 12px;
+	margin-top: auto;
+	margin-bottom: auto;
+  }
+  
+/* Add these to your style.css or web.css file */
+
+/* 1. Makes all form labels white */
+label {
+    color: #f8f9fa !important; /* A light, off-white color */
+}
+
+/* 2. Styles the password help text (the rules you were seeing) */
+.form-text {
+    display: block !important;
+    color: #c0c0c0 !important;  /* A light, visible gray */
+    font-size: 0.875em;
+    margin-top: 5px;
+}
+
+/* 3. Styles the list *inside* the help text box */
+.form-text ul {
+    list-style-type: disc !important;
+    padding-left: 20px !important;
+    margin-bottom: 0;
+}
+
+/* 4. Styles the validation errors (e.g., "Username taken") */
+/* This makes them a light, visible red */
+.invalid-feedback {
+    display: block !important;
+    color: #f5c6cb !important; 
+    font-weight: bold;
+}

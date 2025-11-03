@@ -1,0 +1,23 @@
+{% extends 'faculty/base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <h3 class="pb-3 text-center">User Login</h3>
+    <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-primary mb-4">Login</button>
+    </form>
+    <div class="bottom" style="text-align: center;">
+        Don't have an account?
+        <a href="{% url 'register' %}" class="text-decoration-none m-2">
+            Sign Up
+        </a>
+        <br>
+        &nbsp;
+        <button type="submit" class="btn btn-primary m-3">
+            <a href="{% url 'home' %}" class="text-decoration-none text-white m-2">
+                Back to Home
+            </a>
+        </button>
+    </div>
+{% endblock %}

@@ -1,0 +1,92 @@
+/* ---
+Global Styles
+--- */
+body {
+    font-family: 'Poppins', sans-serif;
+    /* Light mode default background */
+    background-color: #f8f9fa;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    flex-direction: column;
+    padding-bottom: 150px ;
+}
+
+/* ---
+Navbar
+--- */
+.navbar {
+    /* Use Bootstrap's CSS variables for theme-awareness */
+    background-color: var(--bs-body-bg);
+    border-bottom: 1px solid var(--bs-border-color);
+}
+
+/* ---
+Profile Card
+--- */
+.profile-card {
+    /* Use Bootstrap's card background variable */
+    background-color: var(--bs-card-bg);
+    border: 1px solid var(--bs-border-color);
+}
+
+.profile-img img {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 50%; /* Makes the image round */
+    border: 3px solid var(--bs-border-color);
+}
+
+.footer-mt-auto {
+    margin-top:auto;
+}
+
+.footer-nav-link {
+    padding: 0.25rem 0.5rem;
+}
+
+.social-icons a {
+    transition: color 0.2s ease-in-out;
+}
+
+.social-icons a:hover {
+    color: var(--bs-primary) !important; /* Liven up the hover */
+}
+
+/* View Profile */
+.profile-card-responsive {
+    border-radius: 0.75rem;
+    overflow: hidden; /* Ensures corners are rounded */
+    border: none; /* Let the shadow do the work */
+}
+
+/* Style for the left (green) column */
+.profile-card-left {
+    /* You can use any color or gradient you like here */
+    background-color: #f8f9fa; /* Bootstrap light gray */
+}
+
+/* Style for the main profile picture */
+.profile-pic {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border: 2px solid #858484;
+}
+
+/* Style for the right (details) column */
+.profile-details dt {
+    font-weight: 600; /* Makes the "keys" (like "Phone") bold */
+    color: var(--bs-secondary-color);
+}
+
+.profile-details dd {
+    margin-bottom: 1rem; /* Adds spacing between rows */
+}
+
+/* Make the card responsive on mobile */
+@media (max-width: 767.98px) {
+    .profile-card-left {
+        /* Adds a nice border on mobile */
+        border-bottom: 1px solid var(--bs-border-color);
+    }
+}
