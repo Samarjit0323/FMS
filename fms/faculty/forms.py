@@ -38,7 +38,7 @@ class RegisterForm(UserCreationForm):
         self.fields['last_name'].required=True
 
 class ProfileUpdationForm(forms.ModelForm):
-    first_name = forms.CharField(max_length=150, required=True)
+    first_name = forms.CharField(max_length=150, required=True,help_text="Include Title(Dr., Prof., Asst. Prof. etc) and Middle Name if applicable")
     last_name = forms.CharField(max_length=150, required=True)
     class Meta:
         model=FacultyProfile
@@ -65,3 +65,12 @@ class ProfileUpdationForm(forms.ModelForm):
             'address',
             'image'
         )
+
+class EmailUpdateForm(forms.Form):
+    email=forms.EmailField(label="New Email Address",required=True,help_text="A verification link will be sent to this new email address.")
+
+    def clean_email(self):
+        new_email=self.cleaned_data.get('email')
+        if models.User.objects.filter(email=new_email).exists():
+            raise forms.ValidationError("This email ID is already in use")
+        return new_email

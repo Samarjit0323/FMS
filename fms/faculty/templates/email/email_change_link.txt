@@ -1,0 +1,7 @@
+Hi {{ user.username }},
+
+You requested to change your email address. Please click the link below to confirm your new email:
+
+{{ protocol }}://{{ domain }}{% url 'confirm_email_change' uidb64=uidb64 token=token %}
+
+If you did not request this, please ignore this email.

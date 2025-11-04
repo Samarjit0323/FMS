@@ -28,6 +28,7 @@
                                     <a href="#" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#logoutModal">
                                         Logout
                                     </a>
+                                    <a href="{% url 'dashboard' faculty.user.username %}" class="btn btn-outline-secondary ml-4" >Back to Dashboard</a>
                                 </div>
 
                             </div>
@@ -57,7 +58,6 @@
                                     <h5 class="mb-3">Admin Actions</h5>
                                     <a href="#" class="btn btn-outline-secondary" >View All Faculty</a>
                                 {% endif %}
-                                
                             </div>
                             </div>
                     </div>

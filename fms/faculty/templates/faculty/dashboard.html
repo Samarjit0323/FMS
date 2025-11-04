@@ -67,7 +67,9 @@
                         <li class="list-group-item">
                             <a href="{% url 'update_profile' faculty.user.username %}" class="text-decoration-none">Update Profile</a>
                         </li>
-                        
+                        <li class="list-group-item">
+                            <a href="{% url 'request_email_change' faculty.user.username%}" class="text-decoration-none">Update Email</a>
+                        </li>
                         {% if user.is_superuser %}
                         <li class="list-group-item">
                             <a href="#" class="text-decoration-none">View Other Faculty</a>
