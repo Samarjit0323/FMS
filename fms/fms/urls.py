@@ -17,18 +17,24 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from faculty import views
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import *
 from django.conf import settings
 from django.conf.urls.static import static
+from faculty.forms import CustomLoginForm
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.home, name='home'),
     path('register/', views.register, name='register'),
-    path('login/',LoginView.as_view(template_name="faculty/login.html",redirect_authenticated_user=True),name="login"),
+    path('login/',LoginView.as_view(template_name="faculty/login.html",redirect_authenticated_user=True,form_class=CustomLoginForm),name="login"),
     path("logout/",views.logout_user,name='logout'),
     path("<str:faculty>/",include("faculty.urls")),
     path('logout/',views.logout,name="logout"),
+    path('password-reset/',PasswordResetView.as_view(template_name="faculty/password_reset.html"),name="password_reset"),
+    path('password-reset/success/',PasswordResetDoneView.as_view(template_name="faculty/password_reset_done.html"),name="password_reset_done"),
+    path('password-reset-confirm/<uidb64>/<token>/',PasswordResetConfirmView.as_view(template_name="faculty/password_reset_confirm.html"),name="password_reset_confirm"),
+    path('password-reset-complete/',PasswordResetCompleteView.as_view(template_name="faculty/password_reset_complete.html"),name="password_reset_complete"),
+
 ]
 
 if settings.DEBUG:
