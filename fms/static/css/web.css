@@ -29,8 +29,8 @@ Profile Card
 }
 
 .profile-img img {
-    width: 200px;
-    height: 200px;
+    width: 150px;
+    height: 150px;
     object-fit: cover;
     border-radius: 50%; /* Makes the image round */
     border: 3px solid var(--bs-border-color);
@@ -90,3 +90,4 @@ Profile Card
         border-bottom: 1px solid var(--bs-border-color);
     }
 }
+

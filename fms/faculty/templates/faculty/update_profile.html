@@ -2,32 +2,172 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
+<style>
+/* Limit modal width and height */
+#cropperModal .modal-dialog {
+    max-width: 600px;
+}
+
+#cropperModal .modal-content {
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+/* Make sure the image and cropper fit nicely */
+#cropperModal .modal-body {
+    padding: 0.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f8f9fa;
+}
+
+/* Constrain image area */
+#cropperModal img {
+    max-width: 100%;
+    max-height: 400px;
+    display: block;
+    object-fit: contain;
+}
+
+/* Prevent cropper canvas from leaking outside */
+.cropper-container {
+    max-width: 100% !important;
+    max-height: 400px !important;
+    overflow: hidden !important;
+}
+</style>
 <div class="row justify-content-center mt-4">
-    <div class="col-lg-5 col-xl-5">
+  <div class="col-lg-5 col-xl-5">
+    <div class="card shadow-sm">
+      <div class="card-header">
+        <h4 class="mb-0">Update Your Profile, {{ user.username }}</h4>
+      </div>
 
-        <div class="card shadow-sm">
-            <div class="card-header">
-                <h4 class="mb-0">Update Your Profile, {{user.username}}</h4>
+      <div class="card-body p-4">
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          {% crispy form %}
+
+          <!-- Preview after crop -->
+          <div class="mt-3 text-center">
+            <img id="croppedPreview" src="#" alt="Preview" class="img-fluid rounded-circle shadow-sm"
+                 style="max-width:200px; display:none; border:2px solid #dee2e6;">
+          </div>
+
+          <div class="card-footer bg-transparent px-0 pt-4 mt-3">
+            <div class="d-flex justify-content-between align-items-center">
+              <a href="{% url 'dashboard' faculty.user.username %}" class="btn btn-outline-secondary">
+                Back to Dashboard
+              </a>
+              <button type="submit" class="btn btn-primary">
+                Save Changes
+              </button>
             </div>
-            
-            <div class="card-body p-4">
-                <form method="post" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    
-                    {% crispy form %}
-                    
-                    <div class="card-footer bg-transparent px-0 pt-4 mt-3">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <a href="{% url 'dashboard' faculty.user.username %}" class="btn btn-outline-secondary">
-                                Back to Dashboard
-                            </a>
-                            <button type="submit" class="btn btn-primary">
-                                Save Changes
-                            </button>
-                        </div>
-                    </div>
-                </form>
-
-            </div> </div> </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 </div>
+
+<!-- Cropper Modal -->
+<div class="modal fade" id="cropperModal" tabindex="-1" aria-labelledby="cropperModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="cropperModalLabel">Crop Profile Image</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center">
+        <img id="cropperImage" src="#" class="img-fluid" alt="Cropper Preview">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" id="cropImageBtn" class="btn btn-primary">Crop & Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Cropper.js + Bootstrap JS -->
+<link rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const imageInput = document.querySelector('#id_image');
+    const cropperImage = document.querySelector('#cropperImage');
+    const croppedPreview = document.querySelector('#croppedPreview');
+    const cropButton = document.querySelector('#cropImageBtn');
+    const modalEl = document.getElementById('cropperModal');
+    const bsModal = new bootstrap.Modal(modalEl);
+
+    let cropper;
+
+    // When user selects an image
+    if (imageInput) {
+        imageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    cropperImage.src = event.target.result;
+                    bsModal.show();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    // Initialize cropper when modal shown
+    modalEl.addEventListener('shown.bs.modal', function() {
+        cropper = new Cropper(cropperImage, {
+            aspectRatio: 1,
+            viewMode: 2,
+            dragMode: 'move',
+            background: false,
+            minContainerWidth: 400,
+            minContainerHeight: 400,
+        });
+    });
+
+    // Destroy cropper when modal hidden
+    modalEl.addEventListener('hidden.bs.modal', function() {
+        if (cropper) {
+            cropper.destroy();
+            cropper = null;
+        }
+    });
+
+    // On Crop button click
+    cropButton.addEventListener('click', function() {
+        if (!cropper) return;
+        cropper.getCroppedCanvas({
+            width: 400,
+            height: 400,
+            fillColor:"#fff",
+        }).toBlob((blob) => {
+            const file = new File([blob], imageInput.files[0].name.replace(/\.[^/.]+$/, ".jpg"), { type: 'image/jpeg' });
+
+            // Replace original file input with cropped one
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            imageInput.files = dataTransfer.files;
+
+            // Show cropped preview
+            const previewReader = new FileReader();
+            previewReader.onload = function(e) {
+                croppedPreview.src = e.target.result;
+                croppedPreview.style.display = 'block';
+            };
+            previewReader.readAsDataURL(file);
+
+            bsModal.hide();
+        });
+    });
+});
+</script>
 {% endblock content %}

@@ -3,8 +3,8 @@ from django.contrib import messages
 from django.contrib.auth import logout,login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from .models import FacultyProfile
-from .forms import ProfileUpdationForm, RegisterForm, EmailUpdateForm
+from .models import FacultyProfile, PersonalDocs
+from .forms import ProfileUpdationForm, RegisterForm, EmailUpdateForm,UploadPDForm
 from django.conf import settings
 #token generator and email tools
 from django.contrib.auth.tokens import default_token_generator
@@ -13,7 +13,9 @@ from django.utils.encoding import force_bytes, force_str
 from django.template.loader import render_to_string
 from django.core.mail import send_mail
 from django.contrib.sites.shortcuts import get_current_site
-
+from django.core.files.base import ContentFile
+from pypdf import PdfReader, PdfWriter
+import os, io
 
 def home(request):
     return render(request, 'faculty/base.html')
@@ -140,3 +142,69 @@ def confirm_email_change(request,uidb64,token):
     else:
         messages.error(request,"Link is either invalid or has expired.")
         return redirect('home')
+    
+def contact(request):
+    faculty_profiles=FacultyProfile.objects.all()
+    return render(request, "faculty/contact.html",{"faculty_profiles":faculty_profiles})
+
+@login_required
+def personal_docs(request,faculty):
+    if request.user.username != faculty:
+        return redirect('personal_docs', faculty=request.user.username)
+    try:
+        faculty_profile = request.user.facultyprofile
+    except FacultyProfile.DoesNotExist:
+        messages.error(request, "Faculty profile not found. Please create one.")
+        return redirect('update_profile',faculty=request.user.username)
+    if request.method=="POST":
+        form=UploadPDForm(request.POST,request.FILES)
+        if form.is_valid():
+            instance=form.save(commit=False)
+            instance.faculty=faculty_profile
+            uploaded_file=instance.doc
+            ext= os.path.splitext(uploaded_file.name)[1].lower()
+            if ext==".pdf":
+                try:
+                    reader=PdfReader(uploaded_file.file)
+                    writer=PdfWriter()
+                    for page in reader.pages:
+                        writer.add_page(page)
+                        writer.pages[-1].compress_content_streams()
+                    compressed_buffer=io.BytesIO()
+                    writer.write(compressed_buffer)
+                    compressed_buffer.seek(0)
+                    instance.doc=ContentFile(compressed_buffer.read(),name=uploaded_file.name)
+                except Exception as e:
+                    messages.error(request,e)
+                    return render(request, "faculty/personal_docs.html", {"faculty": faculty_profile, "form": form})
+            instance.save()
+            messages.success(request,"Document has been uploaded successfully!")
+            return redirect('personal_docs',faculty=request.user.username)
+        else:
+            messages.error(request,"Fix Errors in form")
+    else:
+        form=UploadPDForm()
+    docs_list=PersonalDocs.objects.filter(faculty=faculty_profile).order_by("-uploaded_on")
+    return render(request,"faculty/personal_docs.html",{"faculty":faculty_profile,"form":form,"docs_list":docs_list})
+
+@login_required
+def assignments(request,faculty):
+    faculty=FacultyProfile.objects.get(user=request.user)
+    return render(request,"faculty/assignments.html",{"faculty":faculty})
+
+@login_required
+def research(request,faculty):
+    faculty=FacultyProfile.objects.get(user=request.user)
+    return render(request,"faculty/research.html",{"faculty":faculty})
+
+@login_required
+def delete_pdoc(request,faculty,doc_id):
+    document=get_object_or_404(PersonalDocs,id=doc_id)
+    if document.faculty.user!=request.user:
+        messages.success(request,"Persmission Denied")
+        return redirect("personal_docs",faculty=request.user.username)
+    doc_title=document.title
+    document.delete()
+    messages.success(request,f"{ doc_title } deleted successfully!")
+    return redirect("personal_docs",faculty=request.user.username)
+    

@@ -25,6 +25,7 @@ from faculty.forms import CustomLoginForm
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.home, name='home'),
+    path('contact/',views.contact,name='contact'),
     path('register/', views.register, name='register'),
     path('login/',LoginView.as_view(template_name="faculty/login.html",redirect_authenticated_user=True,form_class=CustomLoginForm),name="login"),
     path("logout/",views.logout_user,name='logout'),

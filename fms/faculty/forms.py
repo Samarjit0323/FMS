@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth import models
-from .models import FacultyProfile
+from .models import FacultyProfile, PersonalDocs
 from django.contrib.auth.forms import UserCreationForm,AuthenticationForm
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Field
@@ -74,3 +74,20 @@ class EmailUpdateForm(forms.Form):
         if models.User.objects.filter(email=new_email).exists():
             raise forms.ValidationError("This email ID is already in use")
         return new_email
+    
+class UploadPDForm(forms.ModelForm):
+
+    class Meta:
+        model=PersonalDocs
+        exclude=('faculty',)
+        widgets = {
+            'docs': forms.ClearableFileInput(attrs={
+                'accept': '.pdf, .jpg, .jpeg, .png'
+            })
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields['doc'].help_text="Upload only .pdf files"
+        self.fields['title'].help_text="Brief one line description of uploading document"

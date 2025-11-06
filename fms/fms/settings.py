@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'faculty.apps.FacultyConfig',
     'crispy_forms',
     'crispy_bootstrap5',
+    'django_extensions',
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
@@ -113,11 +114,17 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 
 USE_TZ = True
+
+GRAPH_MODELS = {
+    'all_applications': True,
+    'group_models': True,
+    'extra_args': ['--fontname=Arial']
+}
 
 
 # Static files (CSS, JavaScript, Images)
