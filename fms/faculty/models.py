@@ -58,7 +58,7 @@ class ResearchPublications(models.Model):
     title=models.CharField(max_length=100)
     subject=models.CharField(max_length=50,default="NA")
     publication_date=models.DateField()
-    link=models.URLField()
+    link=models.URLField(blank=True)
 
     def __str__(self):
         return f"{self.title} ({self.subject})"

@@ -111,6 +111,14 @@ class UploadResearchForm(forms.ModelForm):
     class Meta:
         model=ResearchPublications
         exclude=('faculty',)
+        widgets = {
+            'publication_date': forms.TextInput(
+                attrs={
+                    'class': 'datepicker', 
+                    'placeholder': 'Click to select a date...'
+                }
+            )
+        }
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
         self.fields['title'].help_text="Title of Research Publication"

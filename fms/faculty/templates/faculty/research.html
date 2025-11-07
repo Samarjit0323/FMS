@@ -57,7 +57,7 @@
               <tr>
                 <th scope="col">#</th>
                 <th scope="col">Title</th>
-                <th scope="col">Date of Publication</th>
+                <th scope="col">Publication On</th>
                 <th scope="col">Publication Link</th>
                 <th scope="col" class="text-end">Actions</th>
               </tr>
@@ -151,6 +151,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const deleteUrl = `/${username}/research/${docId}/delete/`; 
         
         confirmDeleteBtn.setAttribute('href', deleteUrl);
+    });
+    flatpickr(".datepicker", {
+        altInput: true,       // Shows a nice, human-readable date
+        altFormat: "F j, Y",  // How the date is displayed (e.g., "November 7, 2025")
+        dateFormat: "Y-m-d",  // The actual format sent to Django
     });
 });
 </script>
