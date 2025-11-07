@@ -106,7 +106,7 @@
                                 <p class="card-text text-muted small">
                                     Track course assignments
                                 </p>
-                                <a href="" class="btn btn-outline-primary btn-sm mt-auto">View Assignments</a>
+                                <a href="{% url 'assignments' faculty.user.username %}" class="btn btn-outline-primary btn-sm mt-auto">View Assignments</a>
                             </div>
                         </div>
                     </div>
@@ -118,7 +118,7 @@
                                 <p class="card-text text-muted small">
                                     View your publications, citations, and research.
                                 </p>
-                                <a href="" class="btn btn-outline-primary btn-sm mt-auto">View Research</a>
+                                <a href="{% url 'research' faculty.user.username %}" class="btn btn-outline-primary btn-sm mt-auto">View Research</a>
                             </div>
                         </div>
                     </div>

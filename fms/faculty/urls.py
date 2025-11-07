@@ -10,5 +10,8 @@ urlpatterns=[
     path('personal_docs/',personal_docs,name="personal_docs"),
     path('assignments/',assignments,name="assignments"),
     path('research/',research,name="research"),
-    path('personal_docs/<int:doc_id>/delete/',delete_pdoc,name="delete_pdoc")
+    path('personal_docs/<int:doc_id>/delete/',delete_pdoc,name="delete_pdoc"),
+    path('assignments/<int:doc_id>/delete/',delete_assignments,name="delete_assignments"),
+    path('research/',research,name="research"),
+    path('research/<int:doc_id>/delete/',delete_research,name="delete_research"),
 ]

@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth import models
-from .models import FacultyProfile, PersonalDocs
+from .models import FacultyProfile, PersonalDocs, AssignmentDocs, ResearchPublications
 from django.contrib.auth.forms import UserCreationForm,AuthenticationForm
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Field
@@ -91,3 +91,27 @@ class UploadPDForm(forms.ModelForm):
 
         self.fields['doc'].help_text="Upload only .pdf files"
         self.fields['title'].help_text="Brief one line description of uploading document"
+
+class UploadAssignmentForm(forms.ModelForm):
+    class Meta:
+        model=AssignmentDocs
+        exclude=('faculty',)
+        widgets = {
+            'docs': forms.ClearableFileInput(attrs={
+                'accept': '.pdf, .jpg, .jpeg, .png'
+            })
+        }
+
+    def __init__(self,*args,**kwargs):
+        super().__init__(*args,**kwargs)
+        self.fields['file'].help_text="Accepted extensions: .pdf, .jpg, .jpeg, .png"
+        self.fields['title'].help_text="Brief one line description of uploading assignment"
+
+class UploadResearchForm(forms.ModelForm):
+    class Meta:
+        model=ResearchPublications
+        exclude=('faculty',)
+    def __init__(self,*args,**kwargs):
+        super().__init__(*args,**kwargs)
+        self.fields['title'].help_text="Title of Research Publication"
+        self.fields['link'].help_text="Link of publication"

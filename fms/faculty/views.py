@@ -3,8 +3,8 @@ from django.contrib import messages
 from django.contrib.auth import logout,login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from .models import FacultyProfile, PersonalDocs
-from .forms import ProfileUpdationForm, RegisterForm, EmailUpdateForm,UploadPDForm
+from .models import FacultyProfile, PersonalDocs, AssignmentDocs, ResearchPublications
+from .forms import ProfileUpdationForm, RegisterForm, EmailUpdateForm,UploadPDForm, UploadAssignmentForm, UploadResearchForm
 from django.conf import settings
 #token generator and email tools
 from django.contrib.auth.tokens import default_token_generator
@@ -189,13 +189,35 @@ def personal_docs(request,faculty):
 
 @login_required
 def assignments(request,faculty):
-    faculty=FacultyProfile.objects.get(user=request.user)
-    return render(request,"faculty/assignments.html",{"faculty":faculty})
+    faculty_profile=FacultyProfile.objects.get(user=request.user)
+    if request.method=="POST":
+        form=UploadAssignmentForm(request.POST, request.FILES)
+        if form.is_valid():
+            instance=form.save(commit=False)
+            instance.faculty=request.user.facultyprofile
+            instance.save()
+            messages.success(request,"Assignment has been uploaded.")
+            return redirect('assignments',faculty=request.user.username)
+    else:
+        form=UploadAssignmentForm()
+    docs_list=AssignmentDocs.objects.filter(faculty=request.user.facultyprofile).order_by("-date_of_submission")
+    return render(request,"faculty/assignments.html",{"form":form,"faculty":faculty_profile,"docs_list":docs_list})
 
 @login_required
 def research(request,faculty):
-    faculty=FacultyProfile.objects.get(user=request.user)
-    return render(request,"faculty/research.html",{"faculty":faculty})
+    faculty_profile=FacultyProfile.objects.get(user=request.user)
+    if request.method=="POST":
+        form=UploadResearchForm(request.POST,request.FILES)
+        if form.is_valid():
+            instance=form.save(commit=False)
+            instance.faculty=request.user.facultyprofile
+            instance.save()
+            messages.success(request,"Paper uploaded successfully!")
+            return redirect('research',faculty=request.user.username)
+    else:
+        form=UploadResearchForm()
+    docs_list=ResearchPublications.objects.filter(faculty=faculty_profile)
+    return render(request,"faculty/research.html",{"faculty":faculty_profile,"form":form,"docs_list":docs_list})
 
 @login_required
 def delete_pdoc(request,faculty,doc_id):
@@ -208,3 +230,24 @@ def delete_pdoc(request,faculty,doc_id):
     messages.success(request,f"{ doc_title } deleted successfully!")
     return redirect("personal_docs",faculty=request.user.username)
     
+@login_required
+def delete_assignments(request,faculty,doc_id):
+    document=get_object_or_404(AssignmentDocs,id=doc_id)
+    if document.faculty.user!=request.user:
+        messages.error(request,"Persmission Denied")
+        return redirect("assignments",faculty=request.user.username)
+    doc_title=document.title
+    document.delete()
+    messages.success(request,f"{ doc_title } deleted successfully!")
+    return redirect("assignments",faculty=request.user.username)
+
+@login_required
+def delete_research(request,faculty,doc_id):
+    paper=get_object_or_404(ResearchPublications,id=doc_id)
+    if paper.faculty.user!=request.user:
+        messages.warning(request,"Internal Error. Retry.")
+        return redirect('research',faculty=request.user.username)
+    paper_title=paper.title
+    paper.delete()
+    messages.success(request,f"Paper: {paper_title[0:max(21,len(paper_title))]} deleted successfully!")
+    return redirect('research',faculty=request.user.username)

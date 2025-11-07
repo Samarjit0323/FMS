@@ -41,4 +41,24 @@ class PersonalDocs(models.Model):
     def __str__(self):
         return f"{self.title} (Uploaded on {self.uploaded_on})"
     
-# class AssignmentDocs
+class AssignmentDocs(models.Model):
+    faculty=models.ForeignKey(FacultyProfile,on_delete=models.CASCADE,related_name='assignments')
+    file=models.FileField(upload_to="docs/assignments/",validators=[validate_file_type])
+    title=models.CharField(max_length=100)
+    uploaded_on=models.DateTimeField(default=timezone.now)
+    date_of_assignment=models.DateField()
+    date_of_submission=models.DateField()
+
+    def __str__(self):
+        return f"{self.title} (DOA: {self.date_of_assignment}; DOS: {self.date_of_submission})"
+    
+class ResearchPublications(models.Model):
+    faculty=models.ForeignKey(FacultyProfile,on_delete=models.CASCADE,related_name="research")
+    file=models.FileField(upload_to="docs/research")
+    title=models.CharField(max_length=100)
+    subject=models.CharField(max_length=50,default="NA")
+    publication_date=models.DateField()
+    link=models.URLField()
+
+    def __str__(self):
+        return f"{self.title} ({self.subject})"
