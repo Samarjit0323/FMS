@@ -99,7 +99,19 @@ class UploadAssignmentForm(forms.ModelForm):
         widgets = {
             'docs': forms.ClearableFileInput(attrs={
                 'accept': '.pdf, .jpg, .jpeg, .png'
-            })
+            }),
+            'date_of_submission': forms.TextInput(
+                attrs={
+                    'class': 'datepicker', 
+                    'placeholder': 'Click to select a date...'
+                }
+            ),
+            'date_of_assignment': forms.TextInput(
+                attrs={
+                    'class': 'datepicker', 
+                    'placeholder': 'Click to select a date...'
+                }
+            )
         }
 
     def __init__(self,*args,**kwargs):

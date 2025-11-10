@@ -56,7 +56,7 @@
                                 {% if user.is_superuser %}
                                     <hr>
                                     <h5 class="mb-3">Admin Actions</h5>
-                                    <a href="#" class="btn btn-outline-secondary" >View All Faculty</a>
+                                    <a href="{% url 'all_faculty' %}" class="btn btn-outline-secondary" >View All Faculty</a>
                                 {% endif %}
                             </div>
                             </div>

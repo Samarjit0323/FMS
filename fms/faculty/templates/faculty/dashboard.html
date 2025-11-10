@@ -26,7 +26,7 @@
             <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
                 <img src="{% static 'assets/JGEC_logo.png' %}" alt="JGEC Logo" height="30" class="d-inline-block align-text-top me-2">
                 <span class="fw-bold ml-4">
-                    Department of {{ faculty.department }}, Jalpaiguri Government Engineering College
+                    Dept. of CSE, JGEC
                 </span>
             </a>
             
@@ -75,7 +75,7 @@
                         </li>
                         {% if user.is_superuser %}
                         <li class="list-group-item">
-                            <a href="#" class="text-decoration-none">View Other Faculty</a>
+                            <a href="{% url 'all_faculty' %}" class="text-decoration-none">View Other Faculty</a>
                         </li>
                         {% endif %}
                         

@@ -14,6 +14,7 @@ from django.template.loader import render_to_string
 from django.core.mail import send_mail
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.files.base import ContentFile
+from django.core.exceptions import PermissionDenied
 from pypdf import PdfReader, PdfWriter
 import os, io
 
@@ -251,3 +252,23 @@ def delete_research(request,faculty,doc_id):
     paper.delete()
     messages.success(request,f"Paper: {paper_title[0:max(21,len(paper_title))]} deleted successfully!")
     return redirect('research',faculty=request.user.username)
+
+@login_required
+def all_faculty(request):
+    faculty_list=FacultyProfile.objects.all()
+    return render(request,"faculty/allfaculty.html",{"faculty_list":faculty_list})
+
+@login_required
+def view_all_documents(request,username):
+    profile=get_object_or_404(FacultyProfile,user__username=username)
+    if not request.user.is_superuser:
+        raise PermissionDenied
+    personal_docs=PersonalDocs.objects.filter(faculty=profile).order_by('-uploaded_on')
+    research=ResearchPublications.objects.filter(faculty=profile).order_by('-publication_date')
+    assignments=AssignmentDocs.objects.filter(faculty=profile).order_by("date_of_submission")
+    context={
+        "personal_docs_list":personal_docs,
+        "research_list":research,
+        "assignments_list":assignments,
+    }
+    return render(request,"faculty/partials/_all_documents_modal.html",context=context)

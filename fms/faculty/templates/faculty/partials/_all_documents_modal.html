@@ -1,0 +1,116 @@
+<ul class="nav nav-tabs" id="docTab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="personal-tab" data-bs-toggle="tab" data-bs-target="#personal-pane" type="button">
+      Personal Docs ({{ personal_docs_list.count }})
+    </button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="research-tab" data-bs-toggle="tab" data-bs-target="#research-pane" type="button">
+      Research ({{ research_list.count }})
+    </button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="assignments-tab" data-bs-toggle="tab" data-bs-target="#assignments-pane" type="button">
+      Assignments ({{assignments_list.count}})
+    </button>
+  </li>
+</ul>
+
+<div class="tab-content" id="docTabContent">
+  
+  <div class="tab-pane fade show active" id="personal-pane" role="tabpanel">
+    <div class="card-body p-0" style="overflow-y: auto;">
+      {% if personal_docs_list %}
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light sticky-top">
+            <tr>
+              <th scope="col">Title</th>
+              <th scope="col">Type</th>
+              <th scope="col">Uploaded On</th>
+              <th scope="col" class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for doc in personal_docs_list %}
+              <tr>
+                <td class="fw-semibold">{{ doc.title }}</td>
+                <td><span class="badge bg-secondary-subtle ...">{{ doc.get_file_extension }}</span></td>
+                <td>{{ doc.uploaded_on|date:"d M Y" }}</td>
+                <td class="text-end">
+                  <a href="{{ doc.docs.url }}" target="_blank" class="btn btn-sm btn-outline-primary me-2"><i class="bi bi-eye"></i></a>
+                  <a href="{{ doc.docs.url }}" download class="btn btn-sm btn-outline-success"><i class="bi bi-download"></i></a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p class="p-4 text-center text-muted">No personal documents uploaded.</p>
+      {% endif %}
+    </div>
+  </div>
+  
+  <div class="tab-pane fade" id="research-pane" role="tabpanel">
+    <div class="card-body p-0" style="overflow-y: auto;">
+      {% if research_list %}
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light sticky-top">
+             <tr>
+                <th scope="col">Title</th>
+                <th scope="col">Date</th>
+                <th scope="col">Publication Link</th>
+                <th scope="col" class="text-end">Actions</th>
+             </tr>
+          </thead>
+          <tbody>
+            {% for doc in research_list %}
+              <tr>
+                <td class="fw-semibold">{{ doc.title }}</td>
+                <td>{{ doc.publication_date|date:"d M Y" }}</td>
+                <td>
+                  {% if doc.link %}<a href="{{ doc.link }}" target="_blank">View</a>{% else %}<span class="text-muted">N/A</span>{% endif %}
+                </td>
+                <td class="text-end">
+                  <a href="{{ doc.file.url }}" target="_blank" class="btn btn-sm btn-outline-primary me-2"><i class="bi bi-eye"></i></a>
+                  <a href="{{ doc.file.url }}" download class="btn btn-sm btn-outline-success"><i class="bi bi-download"></i></a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p class="p-4 text-center text-muted">No research papers uploaded.</p>
+      {% endif %}
+    </div>
+  </div>
+  
+  <div class="tab-pane fade" id="assignments-pane" role="tabpanel">
+    <div class="card-body p-0" style="overflow-y: auto;">
+      {% if assignments_list %}
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light sticky-top">
+             <tr>
+                <th scope="col">Title</th>
+                <th scope="col">Submission Date</th>
+                <th scope="col" class="text-end">Actions</th>
+             </tr>
+          </thead>
+          <tbody>
+            {% for doc in assignments_list %}
+              <tr>
+                <td class="fw-semibold">{{ doc.title }}</td>
+                <td>{{ doc.date_of_submission|date:"d M Y" }}</td>
+                <td class="text-end">
+                  <a href="{{ doc.file.url }}" target="_blank" class="btn btn-sm btn-outline-primary me-2"><i class="bi bi-eye"></i></a>
+                  <a href="{{ doc.file.url }}" download class="btn btn-sm btn-outline-success"><i class="bi bi-download"></i></a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p class="p-4 text-center text-muted">No assignments uploaded.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>

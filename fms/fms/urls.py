@@ -36,7 +36,8 @@ urlpatterns = [
     path('password-reset-confirm/<uidb64>/<token>/',PasswordResetConfirmView.as_view(template_name="faculty/password_reset_confirm.html"),name="password_reset_confirm"),
     path('password-reset-complete/',PasswordResetCompleteView.as_view(template_name="faculty/password_reset_complete.html"),name="password_reset_complete"),
     path('confirm-email-change/<uidb64>/<token>/',views.confirm_email_change,name="confirm_email_change"),
-
+    path('allfaculty/',views.all_faculty,name="all_faculty"),
+    path('<username>/all-documents/', views.view_all_documents, name='view_all_documents'),
 ]
 
 if settings.DEBUG:
