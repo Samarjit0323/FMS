@@ -16,7 +16,9 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.core.files.base import ContentFile
 from django.core.exceptions import PermissionDenied
 from pypdf import PdfReader, PdfWriter
-import os, io
+import os, io, csv
+import plotly.graph_objects as pgo
+import pandas as pd
 
 def home(request):
     return render(request, 'faculty/base.html')
@@ -256,7 +258,32 @@ def delete_research(request,faculty,doc_id):
 @login_required
 def all_faculty(request):
     faculty_list=FacultyProfile.objects.all()
-    return render(request,"faculty/allfaculty.html",{"faculty_list":faculty_list})
+    df=pd.read_csv(r"media\misc\publications.csv")
+    if not df.empty:
+        pub_count=df.groupby("Year").size().reset_index(name="Publication_Count")
+        fig=pgo.Figure()
+        fig.add_trace(pgo.Pie(
+            labels=pub_count["Year"],
+            values=pub_count["Publication_Count"],
+            name="Publications",
+            textinfo="label+percent",
+            marker={'colors': ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd']}, 
+            marker_line={'color': '#000000', 'width': 1}
+            )
+        )
+        fig.update_layout(
+            title={
+                'text': "Publications Distribution by Year",
+                'y':0.9,
+                'x':0.5,
+                'xanchor': 'center',
+                'yanchor': 'top',
+                'font': {'size': 20, 'color': '#333333', 'family': 'Arial, sans-serif'}
+            },
+            template="plotly_white"
+        )
+        graph_html=fig.to_html(full_html=False,include_plotlyjs="cdn")
+    return render(request,"faculty/allfaculty.html",{"faculty_list":faculty_list,"graph_html":graph_html})
 
 @login_required
 def view_all_documents(request,username):

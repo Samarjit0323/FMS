@@ -137,6 +137,30 @@
       </div>
     </div>
   </div>
+  <div class="card shadow-sm rounded-lg border-0">
+    <!-- .card-body: Provides standard padding inside the card. -->
+    <div class="card-body">
+      <!-- .card-title: Standard Bootstrap class for a card's title. -->
+      <h2 class="card-title h5 mb-3 text-dark">
+        Publications Distribution by Year
+      </h2>
+
+      <!-- 
+      Chart container
+      .w-100: (width: 100%) Ensures the chart container fills the card.
+    -->
+      <div
+        class="chart-container w-100"
+        style="min-height: 350px; height: auto"
+      >
+        <!-- 
+        The Plotly HTML (graph_html) is injected here.
+        The '|safe' filter is essential for rendering the raw HTML/JS.
+      -->
+        {{ graph_html|safe }}
+      </div>
+    </div>
+  </div>
   <div
     class="modal fade"
     id="allDocsModal"
