@@ -1,0 +1,5 @@
+fms/.env
+fms/media/
+fms/db.sqlite3
+fms/script.py
+myenv/
