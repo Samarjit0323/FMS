@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 import os
 import environ
+from decouple import config
+import dj_database_url
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -43,6 +45,8 @@ INSTALLED_APPS = [
     'crispy_forms',
     'crispy_bootstrap5',
     'django_extensions',
+    'cloudinary',
+    'cloudinary_storage'
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
@@ -82,13 +86,27 @@ WSGI_APPLICATION = 'fms.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
+DATABASES = {
+    'default': dj_database_url.config(
+        # 1. Read the exact variable name from the .env file
+        env='DATABASE_URL', 
+        
+        # 2. Provide a safe SQLite fallback using BASE_DIR
+        default=f'sqlite:///{BASE_DIR / "db.sqlite3"}', 
+        
+        # 3. Recommended for production databases
+        conn_max_age=600,
+        conn_health_checks=True,
+        ssl_require=True,
+    )
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -142,7 +160,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL="home"
 
-MEDIA_ROOT=os.path.join(BASE_DIR,'media')
+CLOUDINARY_URL=config("CLOUDINARY_URL")
+DEFAULT_FILE_STORAGE="cloudinary_storage.storage.MediaCloudinaryStorage"
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# MEDIA_ROOT=os.path.join(BASE_DIR,'media')
 MEDIA_URL="/media/"
 
 
