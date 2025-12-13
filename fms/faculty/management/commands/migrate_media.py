@@ -1,42 +1,68 @@
-# your_app_name/management/commands/migrate_media.py
-
-import os
 from django.core.management.base import BaseCommand
-from faculty.models import FacultyProfile # <-- CHANGE 'FacultyProfile' to your model name
-from django.conf import settings # Needed for potential pathing
+from cloudinary.uploader import upload
+from django.conf import settings
+import os
+
+from faculty.models import (
+    FacultyProfile,
+    PersonalDocs,
+    AssignmentDocs,
+    ResearchPublications,
+)
 
 class Command(BaseCommand):
-    help = 'Updates DB records with Cloudinary Public IDs based on local file paths.'
+    help = "Upload local media to Cloudinary and update Neon DB references"
 
-    def handle(self, *args, **options):
-        # Filter for objects that actually have an image/file to migrate
-        # Adjust 'image' to your actual CloudinaryField name
-        records_to_migrate = FacultyProfile.objects.filter(image__isnull=False).exclude(image='')
-        
-        self.stdout.write(f"Found {records_to_migrate.count()} records to migrate...")
+    def upload_and_update(self, instance, field_name, folder):
+        file_field = getattr(instance, field_name)
 
-        for profile in records_to_migrate:
-            try:
-                # 1. Get the old file name/path stored in the database
-                # Access the underlying string value directly from the CloudinaryField object
-                old_relative_path = str(profile.image) 
+        if not file_field:
+            return
 
-                # IMPORTANT: Skip records that are already migrated or empty
-                # An already-migrated field would have no extension (e.g., 'profile_pics/dr_smith')
-                # if '.' not in old_relative_path:
-                #     self.stdout.write(self.style.WARNING(f"Skipping PK {profile.pk}: Already appears migrated or empty."))
-                #     continue
-                    
-                # 2. Derive the Cloudinary Public ID (by removing the extension)
-                public_id = os.path.splitext(old_relative_path)[0]
+        # OLD local path stored in DB
+        local_path = os.path.join(settings.BASE_DIR, 'media', str(file_field))
 
-                # 3. Update the CloudinaryField with the Public ID
-                profile.image = public_id
-                profile.save()
-                
-                self.stdout.write(self.style.SUCCESS(
-                    f"Updated PK {profile.pk} | Old Path: {old_relative_path} -> New ID: {public_id}"
-                ))
+        if not os.path.exists(local_path):
+            self.stdout.write(
+                self.style.WARNING(f"File not found: {local_path}")
+            )
+            return
 
-            except Exception as e:
-                self.stdout.write(self.style.ERROR(f"Error migrating PK {profile.pk}: {e}"))
+        # Upload to Cloudinary
+        result = upload(
+            local_path,
+            folder=folder,
+            resource_type="auto"
+        )
+
+        # Save Cloudinary public_id
+        setattr(instance, field_name, result['public_id'])
+        instance.save(update_fields=[field_name])
+
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"✔ {local_path} → {result['public_id']}"
+            )
+        )
+
+    def handle(self, *args, **kwargs):
+
+        self.stdout.write("Migrating FacultyProfile images...")
+        for profile in FacultyProfile.objects.all():
+            self.upload_and_update(profile, 'image', 'profile_pics')
+
+        self.stdout.write("Migrating PersonalDocs...")
+        for doc in PersonalDocs.objects.all():
+            self.upload_and_update(doc, 'doc', 'docs/personal_docs')
+
+        self.stdout.write("Migrating AssignmentDocs...")
+        for assignment in AssignmentDocs.objects.all():
+            self.upload_and_update(assignment, 'file', 'docs/assignments')
+
+        self.stdout.write("Migrating ResearchPublications...")
+        for research in ResearchPublications.objects.all():
+            self.upload_and_update(research, 'file', 'docs/research')
+
+        self.stdout.write(
+            self.style.SUCCESS("🎉 Media migration completed successfully!")
+        )

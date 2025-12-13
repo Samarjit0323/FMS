@@ -164,22 +164,6 @@ def personal_docs(request,faculty):
         if form.is_valid():
             instance=form.save(commit=False)
             instance.faculty=faculty_profile
-            uploaded_file=instance.doc
-            ext= os.path.splitext(uploaded_file.name)[1].lower()
-            if ext==".pdf":
-                try:
-                    reader=PdfReader(uploaded_file.file)
-                    writer=PdfWriter()
-                    for page in reader.pages:
-                        writer.add_page(page)
-                        writer.pages[-1].compress_content_streams()
-                    compressed_buffer=io.BytesIO()
-                    writer.write(compressed_buffer)
-                    compressed_buffer.seek(0)
-                    instance.doc=ContentFile(compressed_buffer.read(),name=uploaded_file.name)
-                except Exception as e:
-                    messages.error(request,e)
-                    return render(request, "faculty/personal_docs.html", {"faculty": faculty_profile, "form": form})
             instance.save()
             messages.success(request,"Document has been uploaded successfully!")
             return redirect('personal_docs',faculty=request.user.username)
@@ -257,6 +241,7 @@ def delete_research(request,faculty,doc_id):
 
 @login_required
 def all_faculty(request):
+    faculty_profile=FacultyProfile.objects.get(user=request.user)
     faculty_list=FacultyProfile.objects.all()
     df=pd.read_csv(r"media\misc\publications.csv")
     if not df.empty:
@@ -283,7 +268,7 @@ def all_faculty(request):
             template="plotly_white"
         )
         graph_html=fig.to_html(full_html=False,include_plotlyjs="cdn")
-    return render(request,"faculty/allfaculty.html",{"faculty_list":faculty_list,"graph_html":graph_html})
+    return render(request,"faculty/allfaculty.html",{"faculty":faculty_profile,"faculty_list":faculty_list,"graph_html":graph_html})
 
 @login_required
 def view_all_documents(request,username):

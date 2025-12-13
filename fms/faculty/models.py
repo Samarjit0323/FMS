@@ -37,7 +37,7 @@ class FacultyProfile(models.Model):
 
 class PersonalDocs(models.Model):
     faculty=models.ForeignKey(FacultyProfile,on_delete=models.CASCADE,related_name="personal_docs")
-    doc=CloudinaryField(folder="docs/personal_docs/",validators=[validate_file_type])
+    doc=CloudinaryField(resource_type='raw',folder="docs/personal_docs",validators=[validate_file_type])
     title=models.CharField(max_length=100)
     uploaded_on=models.DateTimeField(default=timezone.now)
 
@@ -46,7 +46,7 @@ class PersonalDocs(models.Model):
     
 class AssignmentDocs(models.Model):
     faculty=models.ForeignKey(FacultyProfile,on_delete=models.CASCADE,related_name='assignments')
-    file=CloudinaryField(folder="docs/assignments/",validators=[validate_file_type])
+    file=CloudinaryField(resource_type='raw',folder="docs/assignments",validators=[validate_file_type])
     title=models.CharField(max_length=100)
     uploaded_on=models.DateTimeField(default=timezone.now)
     date_of_assignment=models.DateField()
@@ -57,7 +57,7 @@ class AssignmentDocs(models.Model):
     
 class ResearchPublications(models.Model):
     faculty=models.ForeignKey(FacultyProfile,on_delete=models.CASCADE,related_name="research")
-    file=CloudinaryField(folder="docs/research")
+    file=CloudinaryField(resource_type='raw',folder="docs/research")
     title=models.CharField(max_length=100)
     subject=models.CharField(max_length=50,default="NA")
     publication_date=models.DateField()
