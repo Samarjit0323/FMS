@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
-# build.sh
-# Exit immediately if a command exits with a non-zero status
-set -e
+set -o errexit
 
-# Install dependencies (already handled by Render, but good practice)
-# pip install -r requirements.txt
+# Install dependencies
+pip install -r requirements.txt
 
-# Run collectstatic to prepare static files for WhiteNoise
+# Run migrations to ensure DB schema is up to date
+python manage.py migrate --no-input
+
+# Collect static files
 python manage.py collectstatic --no-input

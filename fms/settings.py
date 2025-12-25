@@ -56,13 +56,13 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware'
 ]
 
 ROOT_URLCONF = 'fms.urls'
@@ -98,9 +98,7 @@ WSGI_APPLICATION = 'fms.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        # 1. Read the exact variable name from the .env file
-        env='DATABASE_URL', 
-        
+    
         # 2. Provide a safe SQLite fallback using BASE_DIR
         default=f'sqlite:///{BASE_DIR / "db.sqlite3"}', 
         
