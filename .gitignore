@@ -1,9 +1,8 @@
-fms/.env
-fms/media/
-fms/db.sqlite3
-fms/script.py
+.env
+media/
+db.sqlite3
+script.py
 myenv/
-fms/script.py
-fms/initial_data.json
+initial_data.json
 __pycache__/
 *.py[cod]
