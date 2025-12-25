@@ -19,7 +19,7 @@ from pypdf import PdfReader, PdfWriter
 import os, io, csv
 import plotly.graph_objects as pgo
 import pandas as pd
-import cloudinary.utils import cloudinary_url
+from cloudinary.utils import cloudinary_url
 
 def home(request):
     return render(request, 'faculty/base.html')
