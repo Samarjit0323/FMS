@@ -3,3 +3,5 @@ fms/media/
 fms/db.sqlite3
 fms/script.py
 myenv/
+fms/script.py
+fms/initial_data.json

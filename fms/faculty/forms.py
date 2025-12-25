@@ -42,7 +42,7 @@ class RegisterForm(UserCreationForm):
 class ProfileUpdationForm(forms.ModelForm):
     first_name = forms.CharField(max_length=150, required=True,help_text="Include Title(Dr., Prof., Asst. Prof. etc) and Middle Name if applicable")
     last_name = forms.CharField(max_length=150, required=True)
-    image = CloudinaryJsFileField(required=False)
+    # image = CloudinaryJsFileField(required=False)
     class Meta:
         model=FacultyProfile
         exclude=('user',)
