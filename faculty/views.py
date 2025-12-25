@@ -19,6 +19,7 @@ from pypdf import PdfReader, PdfWriter
 import os, io, csv
 import plotly.graph_objects as pgo
 import pandas as pd
+import cloudinary.utils import cloudinary_url
 
 def home(request):
     return render(request, 'faculty/base.html')
@@ -243,7 +244,13 @@ def delete_research(request,faculty,doc_id):
 def all_faculty(request):
     faculty_profile=FacultyProfile.objects.get(user=request.user)
     faculty_list=FacultyProfile.objects.all()
-    df=pd.read_csv(r"media\misc\publications.csv")
+    csv_url=cloudinary_url("https://res.cloudinary.com/drzktwgmi/raw/upload/v1765618926/fph3uwlmbh2t3wcmjdtj.csv",resource_type="raw")[0]
+    try: 
+        df=pd.read_csv(csv_url)
+    except Exception as e:
+        print(e)
+        df=pd.DataFrame()
+    df=pd.read_csv(csv_url)
     if not df.empty:
         pub_count=df.groupby("Year").size().reset_index(name="Publication_Count")
         fig=pgo.Figure()
