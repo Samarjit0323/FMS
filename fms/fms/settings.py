@@ -20,16 +20,16 @@ import dj_database_url
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 env=environ.Env(DEBUG=(bool,True))
-environ.Env.read_env(os.path.join(BASE_DIR,'.env'))
+env.read_env(os.path.join(BASE_DIR,'.env'))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 
-SECRET_KEY = os.environ.get("SECRET_KEY")
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env('DEBUG')
 
 ALLOWED_HOSTS = []
 
@@ -164,7 +164,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL="home"
 
-CLOUDINARY_URL=config("CLOUDINARY_URL")
+CLOUDINARY_URL=env("CLOUDINARY_URL")
 STORAGES = {
     "default": {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
@@ -185,3 +185,8 @@ EMAIL_HOST_USER = env('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS')
 EMAIL_FAIL_SILENTLY=False
+
+SECURE_SSL_REDIRECT=env.bool("SECURE_SSL_REDIRECT")
+SESSION_COOKIE_SECURE=env.bool("SESSION_COOKIE_SECURE")
+CSRF_COOKIE_SECURE=env.bool("CSRF_COOKIE_SECURE")
+SECURE_HSTS_SECONDS=env.int("SECURE_HSTS_SECONDS")
