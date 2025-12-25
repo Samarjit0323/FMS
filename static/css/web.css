@@ -4,6 +4,7 @@ Global Styles
 body {
     font-family: 'Poppins', sans-serif;
     /* Light mode default background */
+    background-image: url("{% static 'assets/image.png' %}");
     background-color: #f8f9fa;
     transition: background-color 0.3s ease, color 0.3s ease;
     flex-direction: column;
