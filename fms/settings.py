@@ -25,11 +25,11 @@ env.read_env(os.path.join(BASE_DIR,'.env'))
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-
 SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env('DEBUG')
+ENV = config('ENV')
+DEBUG = ENV != 'production'
 
 ALLOWED_HOSTS = ["fms-sxhc.onrender.com", "localhost", "127.0.0.1"]
 
@@ -185,12 +185,12 @@ EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS')
 EMAIL_FAIL_SILENTLY=False
 
-SECURE_SSL_REDIRECT=env.bool("SECURE_SSL_REDIRECT")
-SESSION_COOKIE_SECURE=env.bool("SESSION_COOKIE_SECURE")
-CSRF_COOKIE_SECURE=env.bool("CSRF_COOKIE_SECURE")
-SECURE_HSTS_SECONDS=env.int("SECURE_HSTS_SECONDS")
-SECURE_HSTS_INCLUDE_SUBDOMAINS=env.bool("SECURE_HSTS_INCLUDE_SUBDOMAINS")
-SECURE_HSTS_PRELOAD=env.bool("SECURE_HSTS_PRELOAD")
+SECURE_SSL_REDIRECT= ENV=="production"
+SESSION_COOKIE_SECURE= ENV=="production"
+CSRF_COOKIE_SECURE= ENV=="production"
+SECURE_HSTS_SECONDS=   31536000 if ENV=="production" else 0
+SECURE_HSTS_INCLUDE_SUBDOMAINS= ENV=="production"
+SECURE_HSTS_PRELOAD= ENV=="production"
 
 LOGGING = {
     'version': 1,
