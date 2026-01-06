@@ -18,7 +18,7 @@ class FacultyProfile(models.Model):
     department=models.CharField(default="Computer Science & Engineering",max_length=50)
     designation=models.CharField(max_length=50)
     # image=models.ImageField(upload_to="profile_pics",default="profile_pics/default_profile.jpg")
-    image=CloudinaryField(folder="profile_pics",default="profile_pics/default_profile")
+    image=CloudinaryField(folder="profile_pics",default="profile_pics/d6r8kppjwtafmjw5mpup")
     
     phone=models.CharField(max_length=13,blank=True)
     address=models.TextField(blank=True)

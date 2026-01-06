@@ -49,7 +49,7 @@ def dashboard(request,faculty):
         faculty_profile=FacultyProfile.objects.get(user=request.user)
     except FacultyProfile.DoesNotExist:
         messages.warning(request,"Update profile to access dashboard")
-        return redirect('update_profile')
+        return redirect('update_profile', faculty=request.user.username)
     return render(request,"faculty/dashboard.html",{"faculty":faculty_profile})
 
 @login_required
