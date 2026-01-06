@@ -2,21 +2,26 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<div class="row justify-content-center " style="margin-top: 5rem;">
+<style>
+    html{
+        height: 100%;
+    }
+</style>
+<div class="row justify-content-center " style="margin-top: 9rem;">
     <div class="col-lg-8 col-xl-8">
-        <div class="card shadow-sm">
+        <div class="card shadow-sm profile-card p-3" style="color: white;">
             <div class="card-header">
-                <h4 class="mb-0">Change Your Email Address</h4>
+                <h4 class="mb-0 pb-3" style="color: #00FF85; border-bottom: 1px solid #00FF85;">Change Your Email Address</h4>
             </div>
             <div class="card-body p-4">
                 <form method="post">
                     {% csrf_token %}
                     {{ form | crispy }}
-                    <div class="d-flex justify-content-between align-items-center mt-4">
-                        <a href="{% url 'dashboard' faculty=user.username %}" class="btn btn-outline-secondary">
+                    <div class="d-flex justify-content-between align-items-center mt-4 fs-5">
+                        <a href="{% url 'dashboard' faculty=user.username %}" class="btn btn-outline-secondary" style="border: 1px solid aqua; color: aqua; font-size: 1.15rem;">
                             Back to Dashboard
                         </a>
-                        <button type="submit" class="btn btn-primary">
+                        <button type="submit" class="btn btn-primary" style="font-size: 1.15rem;">
                             Send Confirmation Link
                         </button>
                     </div>

@@ -1,16 +1,9 @@
 {% extends "faculty/dashboard.html" %} {% load static %} {% block content %}
 
-<link
-  rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
-/>
 
 <style>
   .contact-card-split {
-    border: none;
-    border-radius: 1rem;
     transition: all 0.25s ease;
-    background: #fff;
     min-width: 280px; /* ensures enough width */
     display: flex;
     flex-direction: column;
@@ -80,53 +73,54 @@
     <!-- Faculty Directory Section -->
     <div>
       <div class="d-flex justify-content-between align-items-center mt-4">
-        <a href="{% url 'dashboard' faculty.user.username %}" class="btn btn-outline-primary mb-5">
-            <- Back to Dashboard
+        <a href="{% url 'dashboard' faculty.user.username %}" class="btn mb-5" style="border-color: aqua; color: aqua; font-size: 1.15rem;">
+            <i class="fa-solid fa-caret-left me-1" style="color: aqua;"></i> Back to Dashboard
         </a>
       </div>
-      <h3 class="pb-3 mb-4 border-bottom section-title">
-        
+      <h3 class="pb-3 mb-4 section-title" style="color: #00FF85; font-size: 1.8rem; border-bottom: 1px solid #00FF85;">
         All Faculty
       </h3>
       <div class="custom-grid">
         {% for faculty in faculty_list %}
         <div class="col">
-          <div class="card shadow-sm h-100 contact-card-split">
+          <div class="card shadow-sm h-100 contact-card-split profile-card" style="color: white;">
             <div class="card-body">
               <div class="row align-items-center">
-                <div class="col-4 text-center">
+                <div class="col-4 text-center circle">
                   <img
                     src="{{ faculty.image.url }}"
                     alt="{{ faculty.user.get_full_name }}"
                     class="rounded-circle mb-3 mb-sm-0"
                     width="100"
                     height="100"
+                    style="border-color: #00FF85;"
                   />
                 </div>
                 <div class="col-8">
                   <h5 class="card-title mb-0 fw-semibold">
                     {{ faculty.user.get_full_name }}
                   </h5>
-                  <p class="text-muted small">{{ faculty.designation }}</p>
+                  <p class="small mt-2">{{ faculty.designation }}</p>
                   <hr class="my-2" />
                   <ul class="list-unstyled text-start mb-0 contact-list">
                     <li>
-                      <i class="bi bi-envelope me-2 text-primary"></i>
-                      <a href="#" class="text-decoration-none text-body"
+                      <i class="fa-solid fa-envelope me-2" style="color: aqua;"></i>
+                      <a href="mailto:{{ faculty.user.email }}" class="text-decoration-none" style="color: white;"
                         >{{ faculty.user.email }}</a
                       >
                     </li>
                     <li class="mt-2">
-                      <i class="bi bi-telephone me-2 text-primary"></i>
+                      <i class="fa-solid fa-phone me-2" style="color: aqua;"></i>
                       {{ faculty.phone|default:"N/A" }}
                     </li>
                     <li>
                       <a
                         href=""
-                        class="btn btn-outline-secondary mt-3"
+                        class="btn mt-3"
                         data-bs-toggle="modal"
                         data-bs-target="#allDocsModal"
                         data-bs-username="{{ faculty.user.username }}"
+                        style="border:1px solid aqua; color: aqua; font-size: 1rem;"
                       >
                         View all Documents
                       </a>
@@ -145,11 +139,11 @@
       </div>
     </div>
   </div>
-  <div class="card shadow-sm rounded-lg border-0">
+  <div class="card shadow-sm rounded-lg border-0 profile-card mb-5">
     <!-- .card-body: Provides standard padding inside the card. -->
-    <div class="card-body">
+    <div class="card-body" style="border: 1px solid #00FF85; border-radius: 8px;">
       <!-- .card-title: Standard Bootstrap class for a card's title. -->
-      <h2 class="card-title h5 mb-3 text-dark">
+      <h2 class="card-title h5 mb-3 "  style="color: #00FF85;">
         Publications Distribution by Year
       </h2>
 
@@ -179,15 +173,21 @@
     <div
       class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable"
     >
-      <div class="modal-content">
+      <div class="modal-content profile-card" style="color: white; background-color: rgba(0, 0, 0, 0.75);">
         <div class="modal-header">
-          <h5 class="modal-title" id="allDocsModalLabel">All Documents</h5>
+          <h5 class="modal-title" id="allDocsModalLabel" style="color: #00FF85;">All Documents</h5>
           <button
             type="button"
             class="btn-close"
             data-bs-dismiss="modal"
             aria-label="Close"
           ></button>
+          <button type="button" 
+            class="btn-custom-close" 
+            data-bs-dismiss="modal" 
+            style="position: absolute; top: 15px; right: 15px; background: transparent; border: none; font-size: 1.5rem;">
+        <i class="fa-solid fa-xmark" style="color: aqua;"></i>
+    </button>
         </div>
         <div class="modal-body" id="allDocsModalBody">
           <div class="text-center p-5">

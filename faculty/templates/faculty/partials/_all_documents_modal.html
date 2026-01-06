@@ -1,16 +1,86 @@
-<ul class="nav nav-tabs" id="docTab" role="tablist">
+<style>
+  #docTab {
+    border-bottom: none !important;
+  }
+  #docTab .nav-item button {
+    border-bottom: 2px solid transparent;
+    transition: border-bottom 0.2s ease;
+  }
+  #docTab .nav-item button.active,
+  #docTab .nav-item button[aria-selected="true"] {
+    border-bottom: 3px solid aqua !important;
+  }
+  #docTabContent,
+  #docTabContent .tab-pane,
+  #docTabContent .card-body {
+    background-color: transparent !important;
+  }
+  #docTabContent .table,
+  #docTabContent .table.table-hover,
+  #docTabContent .table tbody,
+  #docTabContent .table tbody tr,
+  #docTabContent .table tbody tr td,
+  #allDocsModalBody .table,
+  #allDocsModalBody .table.table-hover,
+  #allDocsModalBody .table tbody,
+  #allDocsModalBody .table tbody tr,
+  #allDocsModalBody .table tbody tr td {
+    background-color: transparent !important;
+    background: transparent !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+  }
+  #docTabContent .table tbody tr:hover,
+  #docTabContent .table tbody tr:hover td {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+  }
+  #docTabContent .table thead th {
+    font-size: 1.3rem !important;
+    background-color: transparent !important;
+    color: #00FF85!important;
+    border-color: #00FF85 !important;
+  }
+  #docTabContent .table tbody td,
+  #docTabContent .table tbody span,
+  #allDocsModalBody .table tbody td,
+  #allDocsModalBody .table tbody span {
+    color: white !important;
+    font-size: 1.25rem !important;
+  }
+  #docTabContent .table tbody td a:not(.btn),
+  #allDocsModalBody .table tbody td a:not(.btn) {
+    color: white !important;
+  }
+  #docTabContent .text-muted,
+  #allDocsModalBody .text-muted {
+    color: white !important;
+  }
+  #docTabContent .text-end .btn,
+  #allDocsModalBody .text-end .btn {
+    transition: all 0.3s ease;
+    background-color: transparent !important;
+  }
+  #docTabContent .text-end .btn:hover,
+  #allDocsModalBody .text-end .btn:hover {
+    background-color: aqua !important;
+    color: black !important;
+    border-color: aqua !important;
+    transform: scale(1.1);
+  }
+</style>
+
+<ul class="nav nav-tabs mb-3" id="docTab" role="tablist">
   <li class="nav-item" role="presentation">
-    <button class="nav-link active" id="personal-tab" data-bs-toggle="tab" data-bs-target="#personal-pane" type="button">
+    <button class="nav-link active" id="personal-tab" data-bs-toggle="tab" data-bs-target="#personal-pane" type="button" role="tab" aria-controls="personal-pane" aria-selected="true" style="color: aqua; background-color: transparent; border: none; font-size: 1.1rem; font-weight: 500;" >
       Personal Docs ({{ personal_docs_list.count }})
     </button>
   </li>
   <li class="nav-item" role="presentation">
-    <button class="nav-link" id="research-tab" data-bs-toggle="tab" data-bs-target="#research-pane" type="button">
+    <button class="nav-link" id="research-tab" data-bs-toggle="tab" data-bs-target="#research-pane" type="button" role="tab" aria-controls="research-pane" aria-selected="false" style="color: aqua; background-color: transparent; border: none; font-size: 1.1rem; font-weight: 500;" >
       Research ({{ research_list.count }})
     </button>
   </li>
   <li class="nav-item" role="presentation">
-    <button class="nav-link" id="assignments-tab" data-bs-toggle="tab" data-bs-target="#assignments-pane" type="button">
+    <button class="nav-link" id="assignments-tab" data-bs-toggle="tab" data-bs-target="#assignments-pane" type="button" role="tab" aria-controls="assignments-pane" aria-selected="false" style="color: aqua; background-color: transparent; border: none; font-size: 1.1rem; font-weight: 500;" >
       Assignments ({{assignments_list.count}})
     </button>
   </li>
@@ -22,10 +92,9 @@
     <div class="card-body p-0" style="overflow-y: auto;">
       {% if personal_docs_list %}
         <table class="table table-hover align-middle mb-0">
-          <thead class="table-light sticky-top">
+          <thead class="sticky-top">
             <tr>
               <th scope="col">Title</th>
-              <th scope="col">Type</th>
               <th scope="col">Uploaded On</th>
               <th scope="col" class="text-end">Actions</th>
             </tr>
@@ -34,11 +103,10 @@
             {% for doc in personal_docs_list %}
               <tr>
                 <td class="fw-semibold">{{ doc.title }}</td>
-                <td><span class="badge bg-secondary-subtle ...">{{ doc.get_file_extension }}</span></td>
                 <td>{{ doc.uploaded_on|date:"d M Y" }}</td>
                 <td class="text-end">
-                  <a href="{{ doc.docs.url }}" target="_blank" class="btn btn-sm btn-outline-primary me-2"><i class="bi bi-eye"></i></a>
-                  <a href="{{ doc.docs.url }}" download class="btn btn-sm btn-outline-success"><i class="bi bi-download"></i></a>
+                  <a href="{{ doc.doc.url }}" title="View" target="_blank" class="btn me-4" style="border: 1px solid aqua; color: aqua; font-weight: bold;"><i class="fa-solid fa-eye"></i></a>
+                  <a href="{{ doc.doc.url }}" title="Download" download class="btn" style="border: 1px solid aqua; color: aqua; font-weight: bold;"><i class="fa-solid fa-download"></i></a>
                 </td>
               </tr>
             {% endfor %}
@@ -54,7 +122,7 @@
     <div class="card-body p-0" style="overflow-y: auto;">
       {% if research_list %}
         <table class="table table-hover align-middle mb-0">
-          <thead class="table-light sticky-top">
+          <thead class="sticky-top">
              <tr>
                 <th scope="col">Title</th>
                 <th scope="col">Date</th>
@@ -71,8 +139,8 @@
                   {% if doc.link %}<a href="{{ doc.link }}" target="_blank">View</a>{% else %}<span class="text-muted">N/A</span>{% endif %}
                 </td>
                 <td class="text-end">
-                  <a href="{{ doc.file.url }}" target="_blank" class="btn btn-sm btn-outline-primary me-2"><i class="bi bi-eye"></i></a>
-                  <a href="{{ doc.file.url }}" download class="btn btn-sm btn-outline-success"><i class="bi bi-download"></i></a>
+                  <a href="{{ doc.file.url }}" title="View" target="_blank" class="btn me-4" style="border: 1px solid aqua; color: aqua;"><i class="fa-solid fa-eye"></i></a>
+                  <a href="{{ doc.file.url }}" title="Download" download class="btn" style="border: 1px solid aqua; color: aqua;"><i class="fa-solid fa-download"></i></a>
                 </td>
               </tr>
             {% endfor %}
@@ -88,7 +156,7 @@
     <div class="card-body p-0" style="overflow-y: auto;">
       {% if assignments_list %}
         <table class="table table-hover align-middle mb-0">
-          <thead class="table-light sticky-top">
+          <thead class="sticky-top">
              <tr>
                 <th scope="col">Title</th>
                 <th scope="col">Submission Date</th>
@@ -101,8 +169,8 @@
                 <td class="fw-semibold">{{ doc.title }}</td>
                 <td>{{ doc.date_of_submission|date:"d M Y" }}</td>
                 <td class="text-end">
-                  <a href="{{ doc.file.url }}" target="_blank" class="btn btn-sm btn-outline-primary me-2"><i class="bi bi-eye"></i></a>
-                  <a href="{{ doc.file.url }}" download class="btn btn-sm btn-outline-success"><i class="bi bi-download"></i></a>
+                  <a href="{{ doc.file.url }}" title="View" target="_blank" class="btn me-4" style="border: 1px solid aqua; color: aqua;"><i class="fa-solid fa-eye"></i></a>
+                  <a href="{{ doc.file.url }}" title="Download" download class="btn" style="border: 1px solid aqua; color: aqua;"><i class="fa-solid fa-download"></i></a>
                 </td>
               </tr>
             {% endfor %}
@@ -112,5 +180,7 @@
         <p class="p-4 text-center text-muted">No assignments uploaded.</p>
       {% endif %}
     </div>
+  </div>
+</div>
   </div>
 </div>

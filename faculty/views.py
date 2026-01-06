@@ -149,7 +149,8 @@ def confirm_email_change(request,uidb64,token):
     
 def contact(request):
     faculty_profiles=FacultyProfile.objects.all()
-    return render(request, "faculty/contact.html",{"faculty_profiles":faculty_profiles})
+    faculty_profile=get_object_or_404(FacultyProfile,user=request.user)
+    return render(request, "faculty/contact.html",{"faculty_profiles":faculty_profiles,"faculty":faculty_profile})
 
 @login_required
 def personal_docs(request,faculty):

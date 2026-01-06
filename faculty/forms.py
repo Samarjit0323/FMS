@@ -17,7 +17,7 @@ class CustomLoginForm(AuthenticationForm):
             'username',
             AppendedText(
                 Field('password',id="id_password"),
-                '<i id="togglePassword" class="bi bi-eye" style="cursor: pointer;"></i>'
+                '<i id="togglePassword" class="fa-solid fa-eye" style="cursor: pointer;"></i>'
             )
         )
 
