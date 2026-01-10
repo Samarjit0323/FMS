@@ -5,7 +5,6 @@ from django.utils import timezone
 import os
 from django.core.exceptions import ValidationError
 from cloudinary.models import CloudinaryField
-# Create your models here.
 
 def validate_file_type(value):
     ext = os.path.splitext(value.name)[1].lower()
@@ -65,3 +64,13 @@ class ResearchPublications(models.Model):
 
     def __str__(self):
         return f"{self.title} ({self.subject})"
+
+class Achievements(models.Model):
+    faculty=models.ForeignKey(FacultyProfile,on_delete=models.CASCADE,related_name="achievements")
+    event=models.CharField(max_length=200)
+    date=models.DateField()
+    organized_by=models.CharField(max_length=100)
+    role_type=models.CharField(max_length=50,choices=[('Participant','Participant'),('Presented Research Paper','Presented Research Paper'),('Keynote Speaker','Keynote Speaker'),('Invited session chair','Invited session chair')],default='Participant')
+
+    def __str__(self):
+        return f"{self.event} on {self.date} ({self.role_type})"

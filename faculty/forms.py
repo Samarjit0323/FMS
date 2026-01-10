@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth import models
-from .models import FacultyProfile, PersonalDocs, AssignmentDocs, ResearchPublications
+from .models import FacultyProfile, PersonalDocs, AssignmentDocs, ResearchPublications, Achievements
 from django.contrib.auth.forms import UserCreationForm,AuthenticationForm
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Field
@@ -161,3 +161,19 @@ class UploadResearchForm(forms.ModelForm):
         if file:
             validate_file(file)
         return file
+
+class AchievementForm(forms.ModelForm):
+    class Meta:
+        model=Achievements
+        exclude=('faculty',)
+        widgets={
+            'date': forms.TextInput(
+                attrs={
+                    'class': 'datepicker', 
+                    'placeholder': 'Click to select a date...'
+                }
+            )
+        }
+    def __init__(self,*args,**kwargs):
+        super().__init__(*args,**kwargs)
+        self.fields['event'].help_text="Brief description of achievement or award"

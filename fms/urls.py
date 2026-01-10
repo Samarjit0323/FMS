@@ -38,6 +38,8 @@ urlpatterns = [
     path('confirm-email-change/<uidb64>/<token>/',views.confirm_email_change,name="confirm_email_change"),
     path('allfaculty/',views.all_faculty,name="all_faculty"),
     path('<username>/all-documents/', views.view_all_documents, name='view_all_documents'),
+    path('download-research-report/', views.download_research_report, name='download_research_report'),
+    path('download-achievements-report/', views.download_achievements_report, name='download_achievements_report'),
 ]
 
 if settings.DEBUG:

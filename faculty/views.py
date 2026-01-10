@@ -3,8 +3,8 @@ from django.contrib import messages
 from django.contrib.auth import logout,login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from .models import FacultyProfile, PersonalDocs, AssignmentDocs, ResearchPublications
-from .forms import ProfileUpdationForm, RegisterForm, EmailUpdateForm,UploadPDForm, UploadAssignmentForm, UploadResearchForm
+from .models import FacultyProfile, PersonalDocs, AssignmentDocs, ResearchPublications, Achievements
+from .forms import ProfileUpdationForm, RegisterForm, EmailUpdateForm,UploadPDForm, UploadAssignmentForm, UploadResearchForm, AchievementForm
 from django.conf import settings
 #token generator and email tools
 from django.contrib.auth.tokens import default_token_generator
@@ -20,6 +20,7 @@ import os, io, csv
 import plotly.graph_objects as pgo
 import pandas as pd
 from cloudinary.utils import cloudinary_url
+from django.http import HttpResponse
 
 def home(request):
     return render(request, 'faculty/base.html')
@@ -209,6 +210,22 @@ def research(request,faculty):
     return render(request,"faculty/research.html",{"faculty":faculty_profile,"form":form,"docs_list":docs_list})
 
 @login_required
+def achievements(request,faculty):
+    faculty_profile=FacultyProfile.objects.get(user=request.user)
+    if request.method=="POST":
+        form=AchievementForm(request.POST)
+        if form.is_valid():
+            instance=form.save(commit=False)
+            instance.faculty=request.user.facultyprofile
+            instance.save()
+            messages.success(request,"Achievement added successfully!")
+            return redirect('achievements',faculty=request.user.username)
+    else:
+        form=AchievementForm()
+    achievements_list=Achievements.objects.filter(faculty=faculty_profile).order_by("-date")
+    return render(request,"faculty/achievements.html",{"faculty":faculty_profile,"form":form,"achievements_list":achievements_list})
+
+@login_required
 def delete_pdoc(request,faculty,doc_id):
     document=get_object_or_404(PersonalDocs,id=doc_id)
     if document.faculty.user!=request.user:
@@ -241,6 +258,17 @@ def delete_research(request,faculty,doc_id):
     messages.success(request,f"Paper: {paper_title[0:max(21,len(paper_title))]} deleted successfully!")
     return redirect('research',faculty=request.user.username)
 
+@login_required
+def delete_achievement(request,faculty,achievement_id):
+    achievement=get_object_or_404(Achievements,id=achievement_id)
+    if achievement.faculty.user!=request.user:
+        messages.warning(request,"Internal Error. Retry.")
+        return redirect('achievements',faculty=request.user.username)
+    event_name=achievement.event
+    achievement.delete()
+    messages.success(request,f"Achievement: {event_name[0:max(21,len(event_name))]} deleted successfully!")
+    return redirect('achievements',faculty=request.user.username)
+    
 @login_required
 def all_faculty(request):
     faculty_profile=FacultyProfile.objects.get(user=request.user)
@@ -292,3 +320,35 @@ def view_all_documents(request,username):
         "assignments_list":assignments,
     }
     return render(request,"faculty/partials/_all_documents_modal.html",context=context)
+
+@login_required
+def download_research_report(request):
+    all_faculty=FacultyProfile.objects.all().select_related('user')
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="research_report.csv"'
+    writer=csv.writer(response)
+    for faculty in all_faculty:
+        research_papers=ResearchPublications.objects.filter(faculty=faculty)
+        if research_papers.exists():
+            writer.writerow([f"Research Publications of CSE Faculty"])
+            writer.writerow(["Title","Publication Date","Subject","Link"])
+            for paper in research_papers:
+                writer.writerow([paper.title,paper.publication_date.strftime("%Y-%m-%d"),paper.subject,paper.link])
+            writer.writerow([])
+    return response
+
+@login_required
+def download_achievements_report(request):
+    all_faculty=FacultyProfile.objects.all().select_related('user')
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="achievements_report.csv"'
+    writer=csv.writer(response)
+    for faculty in all_faculty:
+        achievements=Achievements.objects.filter(faculty=faculty)
+        if achievements.exists():
+            writer.writerow([f"Achievements of CSE Faculty"])
+            writer.writerow(["Event","Date","Organized By","Role Type"])
+            for achievement in achievements:
+                writer.writerow([achievement.event,achievement.date.strftime("%Y-%m-%d"),achievement.organized_by,achievement.role_type])
+            writer.writerow([])
+    return response

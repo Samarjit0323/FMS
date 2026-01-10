@@ -1,0 +1,234 @@
+{% extends "faculty/dashboard.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block content %}
+ <style> body
+{
+  padding-bottom: 150px;
+  .docs-table-container .table,
+  .docs-table-container .table.table-hover,
+  .docs-table-container .table tbody,
+  .docs-table-container .table tbody tr,
+  .docs-table-container .table tbody tr td {
+    background-color: transparent !important;
+    background: transparent !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+  }
+  .docs-table-container .table tbody tr:hover,
+  .docs-table-container .table tbody tr:hover td {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+  }
+  .docs-table-container .table thead th {
+    font-size: 1.1rem !important;
+    background-color: transparent !important;
+    color: #00FF85 !important;
+    border-color: #00FF85 !important;
+  }
+  .docs-table-container .table tbody td,
+  .docs-table-container .table tbody span {
+    color: white !important;
+    font-size: 1.1rem !important;
+  }
+  .docs-table-container .table tbody td a:not(.btn) {
+    color: white !important;
+  }
+  .docs-table-container .text-muted {
+    color: white !important;
+  }
+  .docs-table-container .text-end .btn {
+    transition: all 0.3s ease;
+    background-color: transparent !important;
+    border: 1px solid aqua !important;
+    color: aqua !important;
+  }
+  .docs-table-container .text-end .btn:hover {
+    background-color: aqua !important;
+    color: black !important;
+    border-color: aqua !important;
+    transform: scale(1.1);
+  }
+  .docs-table-container .text-end .btn.delete-btn {
+    border-color: #ff4d6d !important;
+    color: #ff4d6d !important;
+  }
+  .docs-table-container .text-end .btn.delete-btn:hover {
+    background-color: #ff4d6d !important;
+    border-color: #ff4d6d !important;
+    color: white !important;
+  }
+  .docs-table-container .text-end .btn i {
+    font-weight: 900;
+    font-size: 1rem;
+  }
+  /* Delete Modal Button Styles */
+  #deleteDocModal .modal-footer .btn {
+    transition: all 0.3s ease;
+    background-color: transparent !important;
+  }
+  #deleteDocModal .modal-footer .btn:hover {
+    transform: scale(1.05);
+  }
+  #deleteDocModal .modal-footer .btn:first-child:hover {
+    background-color: aqua !important;
+    color: black !important;
+    border-color: aqua !important;
+  }
+  #deleteDocModal .modal-footer .btn:last-child:hover {
+    background-color: #ff4d6d !important;
+    color: white !important;
+    border-color: #ff4d6d !important;
+  }
+}
+</style>
+  <div class="text-center my-5">
+    <h3 class="fw-semibold mb-2" style="letter-spacing: 0.5px; color: gold;">
+      <i class="fa-solid fa-trophy me-2"></i>
+      Achievements and Awards
+    </h3>
+    <p style="font-size: 0.95rem; color: white;">
+      Track Achievements
+    </p>
+  </div>
+
+<div class="container">
+  <div class="row g-4">
+    
+    <!-- Left: Upload Form -->
+    <div class="col-lg-5">
+      <div class="card shadow-sm">
+        <div class="card-header">
+          <h5 class="mb-0">Upload New Achievement Record</h5>
+        </div>
+        <div class="card-body p-4">
+          <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form | crispy }}
+            <div class="d-flex justify-content-between align-items-center mt-4">
+
+                <a href="{% url 'dashboard' faculty.user.username %}" class="btn btn-secondary fs-5">
+                    Back to Dashboard
+                </a>
+                
+                <button type="submit" class="btn btn-primary fs-5">
+                    Submit
+                </button>
+
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Uploaded Docs List -->
+<div class="col-lg-7">
+  <div class="card shadow-sm h-100 profile-card p-2" style="color: white;">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h5 class="mb-0" style="color: #00FF85;">Uploaded Achievements</h5>
+      <h6 style="color: white;">Total: {{ achievements_list.count }}</h5>
+    </div>
+
+    <div class="card-body p-2 docs-table-container" style="max-height: 500px; overflow-y: auto;">
+      {% if achievements_list %}
+      <table class="table table-hover align-middle mb-0 fs-5">
+        <thead class="sticky-top">
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Event</th>
+            <th scope="col" class="text-center">Date</th>
+            <th scope="col" class="text-center">Organized By</th>
+            <th scope="col" class="text-center">Role</th>
+            <th scope="col" class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for achievement in achievements_list %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td class="fw-semibold">{{ achievement.event }}</td>
+            <td class="text-center">{{ achievement.date }}</td>
+            <td class="text-center">{{ achievement.organized_by }}</td>
+            <td class="text-center">{{ achievement.role_type }}</td>
+            <td class="text-end">
+              <button 
+                type="button" 
+                class="btn delete-btn" 
+                data-bs-toggle="modal" 
+                data-bs-target="#deleteDocModal"
+                data-id="{{ achievement.id }}"
+                data-title="{{ achievement.event }}"
+              >
+                <i class="fa-solid fa-trash"></i>
+              </button>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="p-4 text-center" style="color: white; opacity: 0.5;">
+        <i class="fa-solid fa-folder-open fs-1 d-block mb-2"></i>
+        No assignments uploaded yet.
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+
+<div class="modal fade" id="deleteDocModal" tabindex="-1" aria-labelledby="deleteDocModalLabel" aria-hidden="true">
+<div class="modal-dialog modal-dialog-centered" style="max-width: 450px;">
+<div class="modal-content profile-card" style="color: white; background-color: rgba(0, 0, 0, 0.75);">
+  <div class="modal-header">
+    <h5 class="modal-title" id="deleteDocModalLabel" style="color: #00FF85;">Confirm Deletion</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <button type="button" 
+      class="btn-custom-close" 
+      data-bs-dismiss="modal" 
+      style="position: absolute; top: 15px; right: 15px; background: transparent; border: none; font-size: 1.5rem;">
+      <i class="fa-solid fa-xmark" style="color: aqua;"></i>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p class="text-white mb-3" style="font-size: 1.1rem;">Are you sure you want to delete this entry?</p>
+    <p class="fw-bold text-danger mb-2" id="doc-title-to-delete" style="font-size: 1.1rem;"></p>
+    <small class="text-white-50" style="font-size: 0.95rem;">This action cannot be undone.</small>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn me-2" data-bs-dismiss="modal" style="border: 1px solid aqua; color: aqua;">Cancel</button>
+    <a id="confirmDeleteBtn" href="#" class="btn" style="border: 1px solid #ff4d6d; color: #ff4d6d;">Yes, Delete</a>
+  </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+const deleteModal = document.getElementById('deleteDocModal');
+const docTitleElement = document.getElementById('doc-title-to-delete');
+const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+
+deleteModal.addEventListener('show.bs.modal', function(event) {
+    const button = event.relatedTarget;
+    const docId = button.getAttribute('data-id');
+    const docTitle = button.getAttribute('data-title');
+
+    docTitleElement.textContent = docTitle;
+    
+    // --- THIS IS THE FIX ---
+    // Get the username from the Django template
+    const username = "{{ faculty.user.username }}";
+    
+    // Build the correct URL to match your new path
+    const deleteUrl = `/${username}/achievements/${docId}/delete/`; 
+    
+    confirmDeleteBtn.setAttribute('href', deleteUrl);
+});
+flatpickr(".datepicker", {
+  altInput: true,       // Shows a nice, human-readable date
+  altFormat: "F j, Y",  // How the date is displayed (e.g., "November 7, 2025")
+  dateFormat: "Y-m-d",  // The actual format sent to Django
+});
+});
+</script>
+{% endblock content %}
